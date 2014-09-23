@@ -1,44 +1,60 @@
+#!/bin/sh
 ############################################################
 # <bsn.cl fy=2013 v=onl>
-#
-#        Copyright 2013, 2014 Big Switch Networks, Inc.
-#
+# 
+#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+# 
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
 # with the License. You may obtain a copy of the License at
-#
+# 
 #        http://www.eclipse.org/legal/epl-v10.html
-#
+# 
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the
 # License.
-#
+# 
 # </bsn.cl>
 ############################################################
 #
-# These are the platforms to include in this installer build.
+# Platform: Quanta LY6
 #
 ############################################################
-INSTALLER_PLATFORMS :=  powerpc-as4600-54t \
-			powerpc-as5600-52x \
-			powerpc-as5610-52x \
-			powerpc-as5710-54x-r0a \
-			powerpc-as5710-54x-r0b \
-			powerpc-as6700-32x-r0 \
-			powerpc-as6700-32x-r0b \
-			powerpc-quanta-lb9a-r0 \
-			powerpc-quanta-lb9-r0 \
-			powerpc-quanta-ly2-r0 \
-			powerpc-quanta-ly6-p2020-r0 \
-			powerpc-quanta-ly6-p2041-r0 \
-			powerpc-dni-7448-r0
 
+cur_dir=$(dirname $0)
+if [ -x $cur_dir/functions ]; then
+	. $cur_dir/functions
+else
+	echo "$cur_dir/functions not found"
+	exit 1
+fi
 
+GPIOS_PER_PORT=4
+PORTS_PER_CPLD=16
 
+cpld_3a=$(gpio_find 3a)
+cpld_3b=$(gpio_find 3b)
 
+for port in $(seq 1 32); do
+	if [ $(($port % 2)) -eq 0 ]; then
+		offset=-2
+	else
+		offset=0
+	fi
 
+	if [ $port -le $PORTS_PER_CPLD ]; then
+		gpio=$(($cpld_3a + ($port + $offset) * $GPIOS_PER_PORT + 1))
+	else
+		gpio=$(($cpld_3b + ($port - $PORTS_PER_CPLD + $offset) * $GPIOS_PER_PORT + 1))
+	fi
 
-
+	present=$(cpld_gpio_get $gpio)
+	if [ $present -eq 0 ]; then
+		echo "port $port: present"
+	else
+		echo "port $port: not present"
+	fi
+done
