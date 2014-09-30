@@ -152,7 +152,7 @@ aptsources=Debian
 
 [Debian]
 packages=locales python apt apt-utils procps net-tools iputils-ping less sudo openssh-server iproute resolvconf vim-tiny zile nano lsof mingetty traceroute realpath rsyslog nfs-common netbase bsdmainutils ifupdown psmisc make
-source=http://${APT_CACHE}mirrors.kernel.org/debian/
+source=http://${APT_CACHE}cdn.debian.net/debian/
 keyring=debian-archive-keyring
 suite=${WS_SUITE}
 omitdebsrc=false
