@@ -1,0 +1,63 @@
+#!/bin/sh
+############################################################
+# <bsn.cl fy=2013 v=onl>
+# 
+#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+# 
+# Licensed under the Eclipse Public License, Version 1.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+# 
+#        http://www.eclipse.org/legal/epl-v10.html
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the
+# License.
+# 
+# </bsn.cl>
+############################################################
+#
+# Platform: Quanta LY2R
+#
+############################################################
+
+cur_dir=$(dirname $0)
+if [ -x $cur_dir/functions ]; then
+	. $cur_dir/functions
+else
+	echo "$cur_dir/functions not found"
+	exit 1
+fi
+
+GPIOS_PER_PORT=4
+PORTS_PER_CPLD=16
+
+cpld_3a=$(gpio_find 3a)
+cpld_3b=$(gpio_find 3b)
+cpld_3c=$(gpio_find 3c)
+
+for port in $(seq 1 48); do
+	if [ $(($port % 2)) -eq 0 ]; then
+		offset=-2
+	else
+		offset=0
+	fi
+
+	if [ $port -le $PORTS_PER_CPLD ]; then
+		gpio=$(($cpld_3a + ($port + $offset) * $GPIOS_PER_PORT + 1))
+	elif [ $port -le $(($PORTS_PER_CPLD * 2)) ]; then
+		gpio=$(($cpld_3b + ($port - $PORTS_PER_CPLD + $offset) * $GPIOS_PER_PORT +1))
+	else
+		gpio=$(($cpld_3c + ($port - $PORTS_PER_CPLD * 2 + $offset) * $GPIOS_PER_PORT + 1))
+	fi
+
+	present=$(cpld_gpio_get $gpio)
+	if [ $present -eq 0 ]; then
+		echo "port $port: present"
+	else
+		echo "port $port: not present"
+	fi
+done
