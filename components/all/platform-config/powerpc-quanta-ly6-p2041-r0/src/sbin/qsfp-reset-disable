@@ -1,42 +1,48 @@
+#!/bin/sh
 ############################################################
 # <bsn.cl fy=2013 v=onl>
-#
-#        Copyright 2013, 2014 Big Switch Networks, Inc.
-#
+# 
+#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+# 
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
 # with the License. You may obtain a copy of the License at
-#
+# 
 #        http://www.eclipse.org/legal/epl-v10.html
-#
+# 
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the
 # License.
-#
+# 
 # </bsn.cl>
 ############################################################
 #
-# These are the platforms to include in this installer build.
+# Platform: Quanta LY6
 #
 ############################################################
-INSTALLER_PLATFORMS :=  powerpc-as4600-54t \
-			powerpc-as5600-52x \
-			powerpc-as5610-52x \
-			powerpc-as5710-54x-r0a \
-			powerpc-as5710-54x-r0b \
-			powerpc-as6700-32x-r0 \
-			powerpc-quanta-lb9a-r0 \
-			powerpc-quanta-lb9-r0 \
-			powerpc-quanta-ly2-r0 \
-			powerpc-quanta-ly6-p2041-r0 \
-			powerpc-dni-7448-r0
 
+cur_dir=$(dirname $0)
+if [ -x $cur_dir/functions ]; then
+	. $cur_dir/functions
+else
+	echo "$cur_dir/functions not found"
+	exit 1
+fi
 
+# Disable QSFP module reset (n=1..16)
+#       RST_N_Px    INTL_Px     MOD_ASB_Px  LPMODE_Px   RST_N_Px    INTL_Px     MOD_ASB_Px  LPMODE_Px
+#       7           6           5           4           3           2           1           0
+# port  2(n-1)+1    2(n-1)+1    2(n-1)+1    2(n-1)+1           2(n-1)      2(n-1)      2(n-1)      2(n-1)
+cpld_3a=$(gpio_find 3a)
+cpld_3b=$(gpio_find 3b)
 
+for i in $(seq 0 15); do
+	gpio=$(($cpld_3a + $i*4 + 3));
+	cpld_gpio_set $gpio 1
 
-
-
-
+	gpio=$(($cpld_3b + $i*4 + 3))
+	cpld_gpio_set $gpio 1
+done
