@@ -167,7 +167,7 @@ installer_umount_blockdev() {
         blockdev=NONEXISTANT
     fi
 
-    if [ grep $blockdev /proc/mounts ]; then
+    if grep -q $blockdev /proc/mounts; then
         umount `cat /proc/mounts | grep ${blockdev} | awk '{print $2}'` || true
     else
         echo $1 not mounted, skipping umount
