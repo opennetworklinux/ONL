@@ -31,7 +31,7 @@ endif
 
 include platforms.mk
 
-INSTALLER_SWI := $(ONL)/builds/swi/amd64/all/onl-$(ONL_RELEASE_VERSION)-amd64-imt.swi
+INSTALLER_SWI := $(ONL)/builds/swi/amd64/all/onl-$(ONL_RELEASE_VERSION)-amd64-all.swi
 INSTALLER_NAME := onl-$(ONL_RELEASE_VERSION)-amd64-all.$(ONL_BUILD_TIMESTAMP).installer
 ONL_BUILD_CONFIG := amd64.all
 
