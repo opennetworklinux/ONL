@@ -1,0 +1,4 @@
+[deb-all]
+packages=vendor-config-onl vendor-config-imt platform-config-x86-64-im-n29xx-t40n-r0
+source=copy:__DIR__/all/ ./
+omitdebsrc=true
