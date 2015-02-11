@@ -1,0 +1,13 @@
+Source: platform-config-x86-64-im-n29xx-t40n-r0
+Section: misc
+Priority: optional
+Maintainer: IMT Support <support@interfacemasters.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.8.4
+
+Package: platform-config-x86-64-im-n29xx-t40n-r0
+Architecture: all
+Depends: vendor-config-imt
+Description: Platform Configuration files for x86-64-im-n29xx-t40n-r0.
+ Platform Configuration files for Interface Masters Technologies, Inc.
+ modular platforms n2972, n2948-12xlm, n2948-6xlm.

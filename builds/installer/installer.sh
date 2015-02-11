@@ -56,7 +56,7 @@
 # This function creates the appropriate device file
 # for a given block partition to avoid this problem.
 #
-#
+############################################################
 
 installer_create_device_file() {
     local blockdev=$1
@@ -99,7 +99,6 @@ installer_partition_cp() {
     rm "${installer_df}"
     rmdir "${installer_df}.mount"
 }
-
 
 ############################################################
 #
@@ -174,7 +173,6 @@ installer_umount_blockdev() {
     fi
 }
 
-
 ############################################################
 #
 # installer_blockdev_format <blockdev> <p1size> <p2size> <p3size>
@@ -216,6 +214,7 @@ installer_blockdev_format() {
 #  loader will be written directly to the partition instead.
 #
 ############################################################
+
 installer_platform_loader() {
     local blockdev=$1
     local partno=$2
@@ -251,6 +250,95 @@ installer_platform_loader() {
 
 ############################################################
 #
+# installer_grub_platform_loader <blockdev> <partno>
+#
+#    <blockdev> The block device name.
+#    <partno>   The partition number.
+#
+# Install the platform loader to the given partition.
+#
+#  The default is to copy the loader to the partition's filesystem.
+#  If 'platform_loader_raw' is specified by the platform, the
+#  loader will be written directly to the partition instead.
+#
+############################################################
+
+installer_grub_platform_loader() {
+    local blockdev=$1
+    local partno=$2
+
+    if [ "${platform_loader}" ]; then
+        # Platform specific override
+        local loader="${platform_loader}"
+    else
+        # Default platform loader
+        local loader="${installer_dir}/onl.${installer_platform}.loader"
+    fi
+
+    if [ "${platform_loader_dst_name}" ]; then
+        local loaderdst="${platform_loader_dst_name}"
+    else
+        local loaderdst="onl-loader"
+    fi
+
+
+    if [ -f "${loader}" ]; then
+        installer_say "Installing the Open Network Loader..."
+
+        if [ "${platform_loader_raw}" ]; then
+            # TODO IMT: no support for raw loader for now!
+            #installer_partition_dd ${blockdev} ${partno} ${loader}
+            echo "Raw installation of loader is not supported!!!"
+        else
+
+            # copy loader to /boot partition
+            installer_create_device_file ${blockdev} ${partno}
+            mkdir -p "${installer_df}.mount"
+            mount "${installer_df}" "${installer_df}.mount"
+            cp "${loader}" "${installer_df}.mount/${loaderdst}"
+            cd ${installer_df}.mount
+            unzip -o ${loaderdst}
+            rm ${loaderdst}
+            cd -
+
+            # update grub with onl loader
+            cat > grub-onl.cfg <<___EOF___
+## Begin grub-onl.cfg
+
+# ONL Loader
+menuentry "ONL" --class gnu-linux --class onie {
+        insmod gzio
+        insmod part_msdos
+        insmod ext2
+        set root='(/dev/sda,msdos1)'
+        search --no-floppy --label --set=root BOOT
+
+        echo    "ONL: Loader ..."
+        linux   /onl.vmlinuz console=tty0 console=ttyS0,115200n8 quiet
+        initrd  /onl.initrd
+}
+
+## End grub-onl.cfg
+___EOF___
+
+            # onie boot update
+            onie-boot-entry-add -n grub-onl.cfg -c grub-onl.cfg
+            onie-boot-default -d grub-onl.cfg
+            onie-boot-update
+
+            umount "${installer_df}.mount"
+            rm "${installer_df}"
+            rmdir "${installer_df}.mount"
+
+        fi
+    else
+        installer_say "The platform loader file is missing. This is unexpected - ${loader}"
+        exit 1
+    fi
+}
+
+############################################################
+#
 # installer_platform_bootconfig <blockdev> <partno>
 #
 #    <blockdev> The block device name.
@@ -275,6 +363,44 @@ installer_platform_bootconfig() {
     else
         if [ "${installer_mode_standalone}" ]; then
             bootconfig="SWI=flash2:onl-${installer_arch}.swi\nNETDEV=ma1\n"
+        else
+            bootconfig='SWI=flash2:.ztn-onl.swi\nNETDEV=ma1\nNETAUTO=dhcp\n'
+        fi
+    fi
+    # Write the boot-config file to the given partition.
+    installer_say "Writing boot-config."
+    echo -e "${bootconfig}" > /tmp/boot-config
+    installer_partition_cp ${blockdev} ${partno} /tmp/boot-config boot-config
+    rm /tmp/boot-config
+}
+
+############################################################
+#
+# installer_grub_platform_bootconfig <blockdev> <partno>
+#
+#    <blockdev> The block device name.
+#    <partno>   The partition number.
+#
+# Generate and write the platform boot-config file
+# into the given partition.
+#
+############################################################
+
+installer_grub_platform_bootconfig() {
+    local blockdev=$1
+    local partno=$2
+
+    # Is there a platform bootconfig file?
+    if [ -f "${installer_platform_dir}/boot-config" ]; then
+        bootconfig=$(cat ${installer_platform_dir}/boot-config)
+    # Is there a platform bootconfig string?
+    elif [ "${platform_bootconfig}" ]; then
+        bootconfig="${platform_bootconfig}"
+    # Use the default.
+    else
+        if [ "${installer_mode_standalone}" ]; then
+            #bootconfig="SWI=flash2:onl-${installer_arch}.swi\nNETDEV=ma1\n"
+            bootconfig="SWI=flash:onl-${installer_arch}.swi\nNETDEV=eth0\n"
         else
             bootconfig='SWI=flash2:.ztn-onl.swi\nNETDEV=ma1\nNETAUTO=dhcp\n'
         fi
@@ -328,6 +454,49 @@ installer_platform_swi() {
 
 ############################################################
 #
+# installer_grub_platform_swi <blockdev> <partno>
+#
+#    <blockdev> The block device name.
+#    <partno>   The partition number.
+#
+# Install the SWI to the given partition.
+#
+############################################################
+
+installer_grub_platform_swi() {
+    local blockdev=$1
+    local partno=$2
+
+    # Is there a platform-specific SWI?
+    if [ -f "${installer_platform_dir}/${installer_platform}.swi" ]; then
+        local swi="${installer_platform_dir}/${installer_platform}.swi"
+    # Is there a default SWI?
+    elif [ -f "${installer_dir}/onl-${installer_arch}.swi" ]; then
+        local swi="${installer_dir}/onl-${installer_arch}.swi"
+    # TODO IMT: issue with ONIE and ONL arch: x86_64 vs amd64.
+    elif [ -f "${installer_dir}/onl-amd64.swi" ]; then
+        local swi="${installer_dir}/onl-amd64.swi"
+    fi
+
+    if [ -f "${swi}" ]; then
+        installer_say "Installing Open Network Software Image..."
+        if [ "${platform_swi_install_name}" ]; then
+            local swidst="${platform_swi_install_name}"
+        else
+            if [ "${installer_mode_standalone}" ]; then
+                local swidst="onl-${installer_arch}.swi"
+            else
+                local swidst=".ztn-onl.swi"
+            fi
+        fi
+        installer_partition_cp ${blockdev} ${partno} ${swi} ${swidst}
+    else
+        installer_say "No Open Network Software Image available for installation. Post-install ZTN installation will be required."
+    fi
+}
+
+############################################################
+#
 # installer_standard_blockdev_install <blockdev> <p1size> <p2size> <p3size>
 #
 #    <blockdev> The block device name.
@@ -335,7 +504,7 @@ installer_platform_swi() {
 #    <p2size>   The size of the /mnt/flash partition.
 #    <p3size>   The size of the /mnt/flash2 partition.
 #
-# Performs a standard installation for the platform.
+# Performs a standard installation for the uBoot based platform.
 # Most platform installers will just call this function with the appropriate arguments.
 #
 ############################################################
@@ -361,6 +530,48 @@ installer_standard_blockdev_install () {
     installer_umount_blockdev "${blockdev}"
 }
 
+############################################################
+#
+# installer_standard_grub_blockdev_install <blockdev> <p1size> <p2size> <p3size>
+#
+#    <blockdev> The block device name.
+#    <p1size>   The size of the loader partition.
+#    <p2size>   The size of the /mnt/flash partition.
+#    <p3size>   The size of the /mnt/flash2 partition.
+#
+# Performs a standard installation for the Grub based platform.
+# Most platform installers will just call this function with the appropriate arguments.
+#
+############################################################
+installer_standard_grub_blockdev_install () {
+    local blockdev=$1
+    # TODO IMT: these parameters are not used for now
+    #local p1size=$2
+    #local p2size=$3
+    #local p3size=$4
+
+    # TODO IMT: for now leave partition as they are and format partition 2.
+    # Standard 3-partition format for loader, /mnt/flash, and /mnt/flash2
+    #installer_blockdev_format "${blockdev}" "${p1size}" "${p2size}" "${p3size}"
+    if [ "${platform_grub_flash_format}" ]; then
+        installer_partition_format ${blockdev} 2 mkdosfs
+    fi
+
+    # Copy the platform loader to the first partition.
+    echo "Copy the platform loader to the first partition."
+    installer_grub_platform_loader "${blockdev}" 1
+
+    # Set the boot-config file.
+    echo "Set the boot-config file."
+    installer_grub_platform_bootconfig "${blockdev}" 2
+
+    # Copy the packaged SWI to the second partition.
+    echo "Copy the packaged SWI to the second partition."
+    installer_grub_platform_swi "${blockdev}" 2
+
+    sync
+    installer_umount_blockdev "${blockdev}"
+}
 
 ############################################################
 #
@@ -406,9 +617,6 @@ installer_mode_standalone=1
 # -> saveenv
 #
 
-
-
-
 fw_printenv onl_installer_standalone &> /dev/null && installer_mode_standalone=1
 
 #
@@ -419,7 +627,6 @@ mount -o remount,size=1024M /tmp || true
 
 # Pickup ONIE defines for this machine.
 [ -r /etc/machine.conf ] && . /etc/machine.conf
-
 
 if [ "${onie_platform}" ]; then
     # Running under ONIE, most likely in the background in installer mode.
@@ -476,15 +683,12 @@ rm -rf "${installer_dir}"
 mkdir "${installer_dir}"
 sed -e '1,/^PAYLOAD_FOLLOWS$/d' "$0" | gzip -dc | ( cd "${installer_dir}" && cpio -imdv ) || exit 1
 
-
 # Developer debugging
 if [ "${installer_unpack_only}" ]; then
     installer_say "Unpack only requested."
     trap - EXIT
     exit 0
 fi
-
-
 
 # Look for the platform installer directory.
 installer_platform_dir="${installer_dir}/lib/platform-config/${installer_platform}"
@@ -513,32 +717,43 @@ installer_say "Platform installer version: ${platform_installer_version:-unknown
 # The platform script must provide this function. This performs the actual install for the platform.
 platform_installer
 
-# The platform script must provide the platform_bootcmd after completing the install.
-if [ "${onie_platform}" ]; then
-    installer_say "Setting ONIE nos_bootcmd to boot Open Network Linux"
-    envf=/tmp/.env
-    cp /dev/null "${envf}"
-    echo "nos_bootcmd ${platform_bootcmd}" >> "${envf}"
-    echo "onl_installer_md5 ${installer_md5}" >> "${envf}"
-    echo "onl_installer_version ${onl_version}" >> "${envf}"
-    if [ "$installer_url" ]; then
-        echo "onl_installer_url ${installer_url}" >> "${envf}"
+# uboot - powerpc, etc.
+if [ "${installer_arch}" == "powerpc" ]; then
+    # The platform script must provide the platform_bootcmd after completing the install.
+    if [ "${onie_platform}" ]; then
+        installer_say "Setting ONIE nos_bootcmd to boot Open Network Linux"
+        envf=/tmp/.env
+        cp /dev/null "${envf}"
+        echo "nos_bootcmd ${platform_bootcmd}" >> "${envf}"
+        echo "onl_installer_md5 ${installer_md5}" >> "${envf}"
+        echo "onl_installer_version ${onl_version}" >> "${envf}"
+        if [ "$installer_url" ]; then
+            echo "onl_installer_url ${installer_url}" >> "${envf}"
+        else
+            echo "onl_installer_url" >> "${envf}"
+        fi
+        fw_setenv -f -s "${envf}"
     else
-        echo "onl_installer_url" >> "${envf}"
+        trap - EXIT
+        installer_say "Install finished."
+        echo "To configure U-Boot to boot Open Network Linux automatically, reboot the switch,"
+        echo "enter the U-Boot shell, and run these 2 commands:"
+        echo "=> setenv bootcmd '${platform_bootcmd}'"
+        echo "=> saveenv"
     fi
-    fw_setenv -f -s "${envf}"
-    trap - EXIT
-    installer_say "Install finished.  Rebooting to Open Network Linux."
-    sleep 3
-    reboot
-else
-    trap - EXIT
-    installer_say "Install finished."
-    echo "To configure U-Boot to boot Open Network Linux automatically, reboot the switch,"
-    echo "enter the U-Boot shell, and run these 2 commands:"
-    echo "=> setenv bootcmd '${platform_bootcmd}'"
-    echo "=> saveenv"
 fi
+
+# grub2 - x86, etc.
+if [ "${installer_arch}" == "x86_64" ]; then
+    # TODO IMT: anything else?
+    installer_say "Open Network Linux x86_64 installation."
+fi
+
+# Normal exit
+trap - EXIT
+installer_say "Install finished.  Rebooting to Open Network Linux."
+sleep 3
+reboot
 
 exit
 

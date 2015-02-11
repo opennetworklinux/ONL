@@ -33,7 +33,7 @@ all:
 	@echo "    install-ws-deps          Install build dependencies into your workspace after creating it."
 	@echo ""
 	@echo "Step #3: (inside workspace)"
-	@echo "    onl-{powerpc,kvm}       Build all ONL for either powerpc or kvm, including "
+	@echo "    onl-{powerpc,amd64,kvm}  Build all ONL for either powerpc, amd64 or kvm, including"
 	@echo "                               components, swi, loader, and installer in workspace."
 	@echo "                               Run inside a workspace after \`make install-ws-deps\`"
 	@echo "                               Equivalent to \`make all-components swi installer\`"
@@ -55,7 +55,6 @@ install-host-deps:
 	sudo dpkg -i tools/*.deb
 	@echo \`make install-host-deps\` SUCCESS
 
-
 ############################################################
 #
 # These need to be installed once in the build workspace
@@ -64,7 +63,6 @@ install-host-deps:
 ############################################################
 install-ws-deps: __install-ws-deps
 
-
 onl-powerpc: ARCH=powerpc
 onl-powerpc: all-components swi installer
 	@echo "##############################################"
@@ -72,6 +70,14 @@ onl-powerpc: all-components swi installer
 	@echo "##############################################"
 	@export ONL=`pwd` && ls -l $$ONL/builds/installer/powerpc/all/*.installer \
 	    $$ONL/builds/swi/powerpc/all/*.swi
+
+onl-amd64: ARCH=amd64
+onl-amd64: all-components swi installer
+	@echo "##############################################"
+	@echo "################     DONE     ################"
+	@echo "##############################################"
+	@export ONL=`pwd` && ls -l $$ONL/builds/installer/amd64/all/*.installer \
+	    $$ONL/builds/swi/amd64/all/*.swi
 
 onl-kvm: ARCH=i386
 onl-kvm: all-components swi kvm-loader kvm-iso
@@ -99,7 +105,6 @@ kvm-loader:
 kvm-iso:
 	export ONL=`pwd` && make -C $$ONL/builds/kvm/i386/onl
 
-
 ############################################################
 #
 # These targets will clean all debian temporary files
@@ -113,23 +118,6 @@ deb-clean:
 	find components -name "*.changes" -delete
 	find components -name files -delete
 	find components -name "*~" -delete
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ############################################################
 #
@@ -183,4 +171,3 @@ install-cross-deps: install-native-deps
 	sudo xapt -a powerpc libedit-dev ncurses-dev libsensors4-dev libwrap0-dev libssl-dev libsnmp-dev
 
 __install-ws-deps: install-cross-deps
-
