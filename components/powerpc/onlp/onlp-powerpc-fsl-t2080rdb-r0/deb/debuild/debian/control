@@ -1,0 +1,12 @@
+Source: onlp-powerpc-fsl-t2080rdb-r0
+Section: misc
+Priority: optional
+Maintainer: Support <support@bigswitch.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.8.4
+
+Package: onlp-powerpc-fsl-t2080rdb-r0
+Architecture: powerpc
+Depends: 
+Description: ONLP Platform Library for the Freescale T2080RDB.
+ ONLP Platform Library for the T2080RDB.

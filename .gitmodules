@@ -13,6 +13,9 @@
 [submodule "submodules/linux-3.8.13"]
 	path = submodules/linux-3.8.13
 	url = git://github.com/opennetworklinux/linux-3.8.13
+[submodule "submodules/linux-4.1.3"]
+	path = submodules/linux-4.1.3
+	url = git://github.com/opennetworklinux/linux-4.1.3
 [submodule "submodules/onlp"]
 	path = submodules/onlp
 	url = git://github.com/opennetworklinux/ONLP
@@ -53,3 +56,6 @@
 [submodule "submodules/loxigen-artifacts"]
 	path = submodules/loxigen-artifacts
 	url = git://github.com/floodlight/loxigen-artifacts
+[submodule "submodules/onlp-fsl"]
+	path = submodules/onlp-fsl
+	url = /home/liusz/shengzhou/ONL/submodules/onlp-fsl.git
