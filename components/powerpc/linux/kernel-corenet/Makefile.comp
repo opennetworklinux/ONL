@@ -1,0 +1,82 @@
+# -*- Makefile -*-
+############################################################
+# <bsn.cl fy=2015 v=onl>
+#
+#  Copyright 2015 Freescale Semiconductor Inc.
+#
+#  Shengzhou Liu <Shengzhou.Liu@freescale.com>
+#
+# Licensed under the Eclipse Public License, Version 1.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+#        http://www.eclipse.org/legal/epl-v10.html
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the
+# License.
+#
+# </bsn.cl>
+#################################################################################################
+#
+# Powerpc Linux for CoreNet SoC (e500mc, e5500, e6500)
+# choose onl_corenet32_defconfig for 32bit kernel (P2041/P4080/P5020/T1024/T1040/T2080/T4240, etc)
+# choose onl_corenet64_defconfig for 64bit kernel (P5020/T1024/T1040/T2080/T4240, etc)
+#
+#################################################################################################
+COMPDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+
+include $(ONL)/make/config.mk
+
+all: kernel-corenet linux-corenet-headers dtbs
+
+kernel-corenet: $(COMPDIR)/kernel-corenet
+linux-corenet-headers: $(COMPDIR)/linux-corenet-headers
+
+KERNEL_CORENET := $(COMPDIR)/kernel-corenet
+KERNEL_CORENET_HEADERS := $(COMPDIR)/linux-corenet-headers
+
+DEFCONFIG := onl_corenet32_defconfig
+
+$(COMPDIR)/kernel-corenet: $(ONL_SUBMODULE_LINUX_4_1_3)/arch/powerpc/configs/$(DEFCONFIG)
+	mkdir -p $(COMPDIR)/linux-build-corenet
+	$(MAKE) -C $(ONL_SUBMODULE_LINUX_4_1_3) $(DEFCONFIG) ARCH=powerpc O=$(COMPDIR)/linux-build-corenet
+	PATH=$$PATH:$(ONL)/tools $(MAKE) -C $(ONL_SUBMODULE_LINUX_4_1_3) uImage ARCH=powerpc O=$(COMPDIR)/linux-build-corenet
+	powerpc-linux-gnu-strip -o $(COMPDIR)/kernel-corenet $(COMPDIR)/linux-build-corenet/vmlinux
+	cp $(COMPDIR)/linux-build-corenet/vmlinux.bin.gz $(COMPDIR)/kernel-corenet.bin.gz
+
+$(COMPDIR)/linux-corenet-headers/.done: $(ONL_SUBMODULE_LINUX_4_1_3)/arch/powerpc/configs/$(DEFCONFIG)
+	mkdir -p $(COMPDIR)/linux-corenet-headers
+	cp -a $(ONL_SUBMODULE_LINUX_4_1_3)/include $(ONL_SUBMODULE_LINUX_4_1_3)/arch/powerpc/include $(COMPDIR)/linux-corenet-headers
+	$(MAKE) -C $(ONL_SUBMODULE_LINUX_4_1_3) ARCH=powerpc O=$(COMPDIR)/linux-corenet-headers $(DEFCONFIG)
+	$(MAKE) -C $(ONL_SUBMODULE_LINUX_4_1_3) ARCH=powerpc O=$(COMPDIR)/linux-corenet-headers headers_install modules_prepare arch/powerpc/lib/crtsavres.o
+	cp -R $(ONL_SUBMODULE_LINUX_4_1_3)/scripts $(COMPDIR)/linux-corenet-headers
+	cp -R $(ONL_SUBMODULE_LINUX_4_1_3)/Makefile $(COMPDIR)/linux-corenet-headers
+	cp -R $(ONL_SUBMODULE_LINUX_4_1_3)/arch/powerpc/Makefile $(COMPDIR)/linux-corenet-headers/arch/powerpc
+	touch $@
+
+$(COMPDIR)/linux-corenet-headers: $(COMPDIR)/linux-corenet-headers/.done
+
+
+# These are the dtb files built for this kernel configuration:
+DTS_LIST := powerpc-fsl-t2080rdb-r0
+DTB_LIST := $(foreach dts,$(DTS_LIST),$(COMPDIR)/linux-corenet-dtbs/$(dts).dtb)
+
+$(COMPDIR)/linux-corenet-dtbs/%.dtb: $(ONL_SUBMODULE_LINUX_4_1_3)/arch/powerpc/boot/dts/%.dts kernel-corenet | $(shell mkdir -p $(COMPDIR)/linux-corenet-dtbs)
+	linux-build-corenet/scripts/dtc/dtc -I dts -O dtb -o $@ $<
+
+dtbs: $(DTB_LIST)
+
+.PHONY: deb
+
+deb:
+	$(MAKE) -C deb
+
+CLEANLIST := kernel-corenet  kernel-corenet.bin.gz  linux-build-corenet  linux-corenet-dtbs  linux-corenet-headers
+
+clean:
+	rm -rf $(CLEANLIST)
+

@@ -134,7 +134,7 @@ PARALLEL_0 := $(shell $(ONLPKG) --list platform-config-)
 $(foreach c,$(PARALLEL_0),$(eval $(call cbuild,$(c),submodules_init)))
 
 # All kernel packages
-PARALLEL_1 := $(shell $(ONLPKG) --list kernel-85xx: kernel-e500mc: kernel-x86-64:)
+PARALLEL_1 := $(shell $(ONLPKG) --list kernel-85xx: kernel-e500mc: kernel-corenet: kernel-x86-64:)
 $(foreach c,$(PARALLEL_1),$(eval $(call cbuild,$(c),$(PARALLEL_0))))
 
 # All initrd packages
