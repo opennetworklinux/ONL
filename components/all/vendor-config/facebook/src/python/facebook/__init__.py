@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ############################################################
 # <bsn.cl fy=2013 v=onl>
 #
@@ -19,21 +20,20 @@
 # </bsn.cl>
 ############################################################
 #
-# These are the platforms to include in this installer build.
+# OpenNetworkPlatform support for FACEBOOK platforms.
 #
 ############################################################
-INSTALLER_PLATFORMS :=  x86-64-dell-s6000-s1220-r0 \
-			x86-64-dell-s4000-c2338-r0 \
-			x86-64-facebook-wedge-r0 \
-			x86-64-accton-as5712-54x-r0 \
-			x86-64-accton-as7512-32x-r0 \
-			x86-64-accton-as6712-32x-r0
+from onl.platform.base import OpenNetworkPlatformBase, sysinfo
+import struct
+import time
 
+class OpenNetworkPlatformFACEBOOK(OpenNetworkPlatformBase):
 
+    def manufacturer(self):
+        return "FACEBOOK"
 
-
-
-
-
-
+    def _sys_info_dict(self):
+        return {
+            sysinfo.PRODUCT_NAME : "FacebookNotImplemented",
+            }
 

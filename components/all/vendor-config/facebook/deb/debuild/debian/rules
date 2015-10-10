@@ -1,0 +1,3 @@
+#!/usr/bin/make -f
+VENDOR_NAME=facebook
+include $(ONL)/make/vendor-config-rules.mk

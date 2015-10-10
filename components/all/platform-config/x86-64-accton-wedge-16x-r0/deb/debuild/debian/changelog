@@ -1,0 +1,5 @@
+platform-config-x86-64-accton-wedge-16x-r0 (0.1.0bsn1~ubuntu1) UNRELEASED; urgency=low
+
+  * Initial release.
+
+ -- Support <support@bigswitch.com>  Thu, 19 Dec 2013 10:38:39 -0800
