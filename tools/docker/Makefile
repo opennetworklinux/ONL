@@ -6,7 +6,7 @@ ifndef ONL
 $(error Need to define $$ONL variable to use this Makefile)
 endif
 
-IMAGE=1.6
+IMAGE=latest
 
 
 # needed to get SSH agent credential forwarding
@@ -23,10 +23,10 @@ DOCKER=docker
 all: docker_run
 
 docker_build: docker_check
-	$(DOCKER) build -t opennetworklinux/onl-build:$(IMAGE) .
+	$(DOCKER) build -t sonn/onl_deb8_builder:$(IMAGE) .
 
 docker_run: docker_check
-	$(DOCKER) pull opennetworklinux/onl-build:$(IMAGE)
+#	$(DOCKER) pull sonn/onl_deb8_builder:$(IMAGE)
 	$(DOCKER) run --privileged -t -i \
         -e USER=root \
         -e ONL=$(ONL) \
@@ -34,7 +34,7 @@ docker_run: docker_check
         -w $(ONL) $(DNS) \
         -h "onl-builder" \
         $(SSH_AGENT) \
-        opennetworklinux/onl-build:$(IMAGE) \
+        sonn/onl_deb8_builder:$(IMAGE) \
         bash -c '/etc/init.d/apt-cacher-ng start && bash'
 
 # DANGER - destructively kills all containers and images - DO NOT USE
@@ -49,7 +49,7 @@ docker_nuke_all: docker_check
 	$(DOCKER) info
 
 docker_push: docker_check
-	$(DOCKER) push opennetworklinux/onl-build 
+	$(DOCKER) push sonn/onl_deb8_builder
 
 docker_check: 
 	@which $(DOCKER) || echo STOP : you need to install docker.io first
