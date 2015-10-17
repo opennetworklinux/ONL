@@ -6,13 +6,6 @@ ifndef ONL
 $(error Need to define $$ONL variable to use this Makefile)
 endif
 
-<<<<<<< HEAD
-# IMAGE=latest
-=======
-IMAGE=1.6
->>>>>>> b8e174079eac3903eac4dbd954bec82118c5476f
-
-
 # needed to get SSH agent credential forwarding
 ifdef SSH_AUTH_SOCK
 ssh_dir = $(shell dirname $$SSH_AUTH_SOCK)
