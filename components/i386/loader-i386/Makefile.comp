@@ -46,7 +46,7 @@ all: loader-i386.iso loader-i386-hda.img
 
 loader-i386.iso: $(kernel-x86_64) $(initrd-i386)
 	mkdir $@.tmp
-	cp /usr/*/syslinux/isolinux.bin $@.tmp/isolinux.bin
+	cp /usr/lib/ISOLINUX/isolinux.bin $@.tmp/isolinux.bin
 	cp $(kernel-x86_64) $@.tmp/kernel	
 	cp $(initrd-i386) $@.tmp/initrd
 	echo -e 'default Open Network Linux\nlabel Open Network Linux\nkernel kernel\nappend initrd=initrd console=ttyS0' >$@.tmp/isolinux.cfg
