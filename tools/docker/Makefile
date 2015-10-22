@@ -33,7 +33,7 @@ docker_run: docker_check
         -h "onl-builder" \
         $(SSH_AGENT) \
         sonn/onl_deb8_builder \
-        bash -c '$(ONL)/tools/docker/docker_shell.sh'
+        bash -c '$(ONL)/tools/docker/docker_shell.sh && make onl-x86'
 
 # DANGER - destructively kills all containers and images - DO NOT USE
 docker_nuke_all: docker_check
