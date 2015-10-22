@@ -23,15 +23,17 @@ docker_build: docker_check
 	$(DOCKER) build -t sonn/onl_deb8_builder .
 
 docker_run: docker_check
-	$(DOCKER) run --privileged -t  \
+	$(DOCKER) run --privileged -t -i \
         -e USER=root \
         -e ONL=$(ONL) \
+        -e MAKE_UID=`id -u` \
+        -e MAKE_USER=$(USER) \
         -v $(ONL):$(ONL) \
         -w $(ONL) $(DNS) \
         -h "onl-builder" \
         $(SSH_AGENT) \
         sonn/onl_deb8_builder \
-        bash -c '/etc/init.d/apt-cacher-ng start && make onl-x86'
+        bash -c '$(ONL)/tools/docker/docker_shell.sh'
 
 # DANGER - destructively kills all containers and images - DO NOT USE
 docker_nuke_all: docker_check
