@@ -8,5 +8,5 @@
 # </bsn.cl>
 ############################################################
 ARCH=all
-PACKAGE_NAMES=platform-config-x86_64-accton_wedge_16x-r0
+PACKAGE_NAMES=platform-config-x86-64-accton-wedge-16x-r0
 include ../../../../../make/debuild.mk
