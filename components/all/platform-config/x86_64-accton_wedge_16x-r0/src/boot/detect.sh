@@ -7,6 +7,14 @@
 #
 # </bsn.cl>
 ############################################################
-ARCH=all
-PACKAGE_NAMES=platform-config-x86-64-facebook-wedge-r0
-include ../../../../../make/debuild.mk
+# Default platform detection.
+
+buf="`dmidecode 2>&1 || :`"
+case "$buf" in
+  *"Product Name: Wedge"*)
+    echo "x86_64-accton_wedge_16x-r0" >/etc/onl_platform
+    exit 0
+  ;;
+esac
+
+exit 1

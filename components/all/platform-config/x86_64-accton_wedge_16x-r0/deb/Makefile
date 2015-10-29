@@ -1,4 +1,3 @@
-#!/usr/bin/make -f
 ############################################################
 # <bsn.cl fy=2013 v=none>
 #
@@ -8,6 +7,6 @@
 #
 # </bsn.cl>
 ############################################################
-PLATFORM_NAME=x86-64-facebook-wedge-r0
-BRCM_PLATFORM_NAME=none
-include $(ONL)/make/platform-config-rules.mk
+ARCH=all
+PACKAGE_NAMES=platform-config-x86_64-accton_wedge_16x-r0
+include ../../../../../make/debuild.mk

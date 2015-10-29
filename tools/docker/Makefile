@@ -23,7 +23,7 @@ docker_build: docker_check
 	$(DOCKER) build -t sonn/onl_deb8_builder .
 
 docker_run: docker_check
-	$(DOCKER) run --privileged -t \
+	$(DOCKER) run --privileged -t -i \
         -e USER=root \
         -e ONL=$(ONL) \
         -e MAKE_UID=`id -u` \
