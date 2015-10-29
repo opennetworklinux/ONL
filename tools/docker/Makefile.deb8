@@ -22,8 +22,12 @@ all: docker_run
 docker_build: docker_check
 	$(DOCKER) build -t sonn/onl_deb8_builder .
 
+DOCKER_SHELL='$(ONL)/tools/docker/docker_shell.sh'
+DOCKER_INTERACTIVE=-i
+
 docker_run: docker_check
-	$(DOCKER) run --privileged -t -i \
+	$(DOCKER) run --privileged -t \
+        $(DOCKER_INTERACTIVE) \
         -e USER=root \
         -e ONL=$(ONL) \
         -e MAKE_UID=`id -u` \
@@ -33,7 +37,7 @@ docker_run: docker_check
         -h "onl-builder" \
         $(SSH_AGENT) \
         sonn/onl_deb8_builder \
-        bash -c '$(ONL)/tools/docker/docker_shell.sh'
+        bash -c $(DOCKER_SHELL)
 
 # DANGER - destructively kills all containers and images - DO NOT USE
 docker_nuke_all: docker_check
