@@ -8,6 +8,6 @@
 #
 # </bsn.cl>
 ############################################################
-PLATFORM_NAME=x86_64-accton_wedge_16x-r0
+PLATFORM_NAME=x86-64-accton-wedge-16x-r0
 BRCM_PLATFORM_NAME=none
 include $(ONL)/make/platform-config-rules.mk

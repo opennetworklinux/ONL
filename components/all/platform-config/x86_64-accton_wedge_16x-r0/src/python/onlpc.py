@@ -22,7 +22,7 @@ class OpenNetworkPlatformImplementation(OpenNetworkPlatformFACEBOOK):
         return "Wedge"
 
     def platform(self):
-        return "x86_64-accton_wedge_16x-r0"
+        return "x86-64-accton-wedge-16x-r0"
 
     def _plat_info_dict(self):
         return {

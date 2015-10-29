@@ -12,7 +12,7 @@
 buf="`dmidecode 2>&1 || :`"
 case "$buf" in
   *"Product Name: Wedge"*)
-    echo "x86_64-accton_wedge_16x-r0" >/etc/onl_platform
+    echo "x86-64-accton-wedge-16x-r0" >/etc/onl_platform
     exit 0
   ;;
 esac
