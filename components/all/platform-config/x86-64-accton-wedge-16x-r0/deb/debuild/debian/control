@@ -7,6 +7,6 @@ Standards-Version: 3.8.4
 
 Package: platform-config-x86-64-accton-wedge-16x-r0
 Architecture: all
-Depends: vendor-config-facebook
+Depends: vendor-config-accton
 Description: Platform Configuration files for x86-64-accton-wedge-16x-r0.
  Platform Configuration files for x86-64-accton-wedge-16x-r0.
