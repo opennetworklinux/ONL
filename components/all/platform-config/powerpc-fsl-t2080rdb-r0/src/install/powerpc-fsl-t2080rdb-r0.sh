@@ -1,8 +1,10 @@
 ############################################################
-# <bsn.cl fy=2013 v=onl>
-# 
-#        Copyright 2013, 2014 Big Switch Networks, Inc.       
-# 
+# <bsn.cl fy=2015 v=onl>
+#
+# Copyright 2015 Freescale Semiconductor, Inc.
+#
+# Shengzhou Liu <Shengzhou.Liu@freescale.com>
+#
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
 # with the License. You may obtain a copy of the License at
@@ -18,19 +20,16 @@
 # 
 # </bsn.cl>
 ############################################################
-ifndef ONL
-$(error $$ONL is undefined.)
-endif
-
 #
-# These are the local packages that must be build
-# for this SWI configuration.
+# Installer scriptlet for the powerpc-fsl-t2080rdb-r0
 #
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
 
-include $(ONL)/make/component.mk
+# The loader must be written raw to the first partition.
+platform_loader_raw=1
+# The loader is installed in the fat partition of the first USB storage device
+platform_bootcmd='usb start; usbboot 0x10000000 0:1; setenv bootargs console=$consoledev,$baudrate onl_platform=powerpc-fsl-t2080rdb-r0; bootm 0x10000000'
 
-
+platform_installer() {
+    # Standard installation to usb storage
+    installer_standard_blockdev_install sda 16M 64M ""
+}

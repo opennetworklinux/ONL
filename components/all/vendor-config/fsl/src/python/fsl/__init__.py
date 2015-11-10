@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ############################################################
 # <bsn.cl fy=2013 v=onl>
 # 
@@ -18,19 +19,21 @@
 # 
 # </bsn.cl>
 ############################################################
-ifndef ONL
-$(error $$ONL is undefined.)
-endif
-
 #
-# These are the local packages that must be build
-# for this SWI configuration.
+# OpenNetworkPlatform support for Freescale platforms.
 #
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
+############################################################
+from onl.platform.base import OpenNetworkPlatformBase, sysinfo
+import struct
+import time
 
-include $(ONL)/make/component.mk
+class OpenNetworkPlatformFSL(OpenNetworkPlatformBase):
 
+    def manufacturer(self):
+        return "FSL"
+
+    def _sys_info_dict(self):
+        return {
+            sysinfo.PRODUCT_NAME : "FSLNotImplemented",
+            }
 

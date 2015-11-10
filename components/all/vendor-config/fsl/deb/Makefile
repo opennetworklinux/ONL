@@ -18,19 +18,6 @@
 # 
 # </bsn.cl>
 ############################################################
-ifndef ONL
-$(error $$ONL is undefined.)
-endif
-
-#
-# These are the local packages that must be build
-# for this SWI configuration.
-#
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
-
-include $(ONL)/make/component.mk
-
-
+ARCH=all
+PACKAGE_NAMES=vendor-config-fsl
+include ../../../../../make/debuild.mk

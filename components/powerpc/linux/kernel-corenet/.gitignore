@@ -1,0 +1,5 @@
+linux-corenet-headers
+linux-corenet-dtbs
+linux-build-corenet
+kernel-corenet
+kernel-corenet.bin.gz

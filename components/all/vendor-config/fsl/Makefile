@@ -22,15 +22,7 @@ ifndef ONL
 $(error $$ONL is undefined.)
 endif
 
-#
-# These are the local packages that must be build
-# for this SWI configuration.
-#
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
+# ONL_REQUIRED_SUBMODULES := 
+ONL_REQUIRED_PACKAGES := vendor-config-onl:all
 
 include $(ONL)/make/component.mk
-
-

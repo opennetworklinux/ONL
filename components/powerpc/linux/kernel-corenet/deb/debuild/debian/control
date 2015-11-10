@@ -1,0 +1,25 @@
+Source: kernel-corenet
+Section: misc
+Priority: optional
+Maintainer: Support <support@bigswitch.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.16
+
+Package: kernel-corenet
+Architecture: powerpc
+Depends:
+Description: Open Network Linux Kernel for Freescale PowerPC CoreNet(e500mc, e5500, e6500 core)
+ This package provides the Open Network Linux Kernel for PowerPC P2041/P4080/P5020/T1024/T1040/T2080/T4240, etc.
+
+Package: kernel-corenet-headers
+Architecture: powerpc
+Depends:
+Description: Open Network Linux Kernel for PowerPC CoreNet(P2041/P4080/P5020/T1024/T1040/T2080/T4240, etc) (Headers)
+ This package provides the Open Network Linux Kernel for PowerPC CoreNet P5020/T1024/T1040/T2080/T4240 (Headers)
+
+Package: kernel-corenet-dtbs
+Architecture: powerpc
+Depends:
+Description: Open Network Linux DTBs for PowerPC CoreNet(P2041/P4080/P5020/T1024/T1040/T2080/T4240) Platforms
+ This package provides the DTBs for supported platforms based on P2041/P5020/T1024/T1040/T2080/T4240 kernel.
+

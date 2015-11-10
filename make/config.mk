@@ -66,6 +66,11 @@ ONL_SUBMODULE_ONLP_QUANTA      := $(ONL)/submodules/onlp-quanta
 ONL_LOCAL_SUBMODULES += onlp-quanta
 endif
 
+ifndef ONL_SUBMODULE_ONLP_FSL
+ONL_SUBMODULE_ONLP_FSL      := $(ONL)/submodules/onlp-fsl
+ONL_LOCAL_SUBMODULES += onlp-fsl
+endif
+
 ifndef ONL_SUBMODULE_LINUX_3_9_6
 ONL_SUBMODULE_LINUX_3_9_6      := $(ONL)/submodules/linux-3.9.6
 ONL_LOCAL_SUBMODULES += linux-3.9.6
@@ -74,6 +79,11 @@ endif
 ifndef ONL_SUBMODULE_LINUX_3_8_13
 ONL_SUBMODULE_LINUX_3_8_13      := $(ONL)/submodules/linux-3.8.13
 ONL_LOCAL_SUBMODULES += linux-3.8.13
+endif
+
+ifndef ONL_SUBMODULE_LINUX_4_1_3
+ONL_SUBMODULE_LINUX_4_1_3      := $(ONL)/submodules/linux-4.1.3
+ONL_LOCAL_SUBMODULES += linux-4.1.3
 endif
 
 ifndef ONL_SUBMODULE_LINUX
@@ -187,7 +197,7 @@ endif
 # This turns out to  be terribly hacky wrt the component makefiles.
 # This should be a temporary solution.
 #
-ALL_SUBMODULES = INFRA COMMON BIGCODE ONLP ONLP_ACCTON ONLP_DNI ONLP_QUANTA ONLP_DELL INDIGO OFDPA_20 OFDPA_20_CLOSED LOXIGEN_ARTIFACTS
+ALL_SUBMODULES = INFRA COMMON BIGCODE ONLP ONLP_ACCTON ONLP_DNI ONLP_QUANTA ONLP_DELL ONLP_FSL INDIGO OFDPA_20 OFDPA_20_CLOSED LOXIGEN_ARTIFACTS
 MODULE_DIRS := $(foreach submodule,$(ALL_SUBMODULES),$(ONL_SUBMODULE_$(submodule))/modules)
 MODULE_DIRS_TOUCH := $(foreach sd,$(MODULE_DIRS),$(shell mkdir -p $(sd) && touch $(sd)/Manifest.mk))
 

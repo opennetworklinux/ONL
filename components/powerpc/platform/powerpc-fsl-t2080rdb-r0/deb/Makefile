@@ -1,7 +1,7 @@
 ############################################################
-# <bsn.cl fy=2013 v=onl>
-# 
-#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+# <bsn.cl fy=2015 v=onl>
+#
+# Copyright 2015 Freescale Semiconductor, Inc.
 # 
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
@@ -18,19 +18,9 @@
 # 
 # </bsn.cl>
 ############################################################
-ifndef ONL
-$(error $$ONL is undefined.)
-endif
+ARCH=powerpc
+PACKAGE_NAMES=platform-powerpc-fsl-t2080rdb-r0
+include ../../../../../make/debuild.mk
 
-#
-# These are the local packages that must be build
-# for this SWI configuration.
-#
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
-
-include $(ONL)/make/component.mk
 
 

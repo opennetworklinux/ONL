@@ -1,7 +1,6 @@
+# -*- Makefile -*-
 ############################################################
-# <bsn.cl fy=2013 v=onl>
-# 
-#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+# <bsn.cl fy=2014 v=onl>
 # 
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
@@ -18,19 +17,19 @@
 # 
 # </bsn.cl>
 ############################################################
+#
+#
+#
+############################################################
 ifndef ONL
-$(error $$ONL is undefined.)
+$(error $$ONL is not set)
 endif
 
-#
-# These are the local packages that must be build
-# for this SWI configuration.
-#
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
+include $(ONL)/make/config.mk
 
-include $(ONL)/make/component.mk
+all:
+	@echo Run 'make deb'
 
-
+.PHONY: deb
+deb:
+	$(MAKE) -C deb

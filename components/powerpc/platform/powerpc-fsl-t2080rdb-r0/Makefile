@@ -1,7 +1,7 @@
 ############################################################
 # <bsn.cl fy=2013 v=onl>
 # 
-#        Copyright 2013, 2014 Big Switch Networks, Inc.       
+#        Copyright 2015 Freescale Semiconductor, Inc.      
 # 
 # Licensed under the Eclipse Public License, Version 1.0 (the
 # "License"); you may not use this file except in compliance
@@ -22,14 +22,9 @@ ifndef ONL
 $(error $$ONL is undefined.)
 endif
 
-#
-# These are the local packages that must be build
-# for this SWI configuration.
-#
-ONL_REQUIRED_PACKAGES := kernel-85xx:powerpc \
-             kernel-e500mc:powerpc \
-	     kernel-corenet:powerpc \
-			 initrd-powerpc:powerpc
+ONL_REQUIRED_PACKAGES := kernel-corenet:powerpc \
+				 kernel-corenet-dtbs:powerpc \
+				 initrd-powerpc:powerpc
 
 include $(ONL)/make/component.mk
 
