@@ -1,0 +1,5 @@
+platform-powerpc-fsl-p2041rdb-r0 (0.1.0bsn1~ubuntu1) UNRELEASED; urgency=low
+
+  * Initial release for fsl p2041rdb
+
+ -- Support <support@bigswitch.com>  Mon, 07 Sep 2015 14:43:18 +0800
