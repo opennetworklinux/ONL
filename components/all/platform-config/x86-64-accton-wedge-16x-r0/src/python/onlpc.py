@@ -9,7 +9,7 @@
 # </bsn.cl>
 ############################################################
 #
-# Platform driver for the Accton AS5712-54X
+# Platform driver for the Accton Wedge.
 #
 ############################################################
 import subprocess
@@ -20,15 +20,15 @@ from onl.vendor.accton import *
 class OpenNetworkPlatformImplementation(OpenNetworkPlatformAccton):
 
     def model(self):
-        return "AS5712-54X"
+        return "Wedge"
 
     def platform(self):
-        return "x86-64-accton-as5712-54x-r0"
+        return "x86-64-accton-wedge-16x-r0"
 
     def _plat_info_dict(self):
         return {
             platinfo.LAG_COMPONENT_MAX : 24,
-            platinfo.PORT_COUNT : 54,
+            platinfo.PORT_COUNT : 16,
             platinfo.ENHANCED_HASHING : True,
             platinfo.SYMMETRIC_HASHING : True,
             }
@@ -37,10 +37,11 @@ class OpenNetworkPlatformImplementation(OpenNetworkPlatformAccton):
         pass
 
     def sys_oid_platform(self):
-        return ".5712.54"
+        # FIXME
+        return ".16.1"
 
     def baseconfig(self):
-        return os.system(os.path.join(self.platform_basedir(), "boot", "x86-64-accton-as5712-54x-r0-devices.sh")) == 0
+        return os.system(os.path.join(self.platform_basedir(), "boot", "x86-64-accton-wedge-r0-devices.sh")) == 0
 
 if __name__ == "__main__":
     print OpenNetworkPlatformImplementation()

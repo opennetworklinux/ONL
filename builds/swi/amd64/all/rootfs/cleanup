@@ -42,8 +42,8 @@ chroot "${WS_ROOT}" /usr/sbin/update-rc.d ntp remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d nfs-common remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d rpcbind remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d motd remove
-chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec remove
-chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec-load remove
+#chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec remove
+#chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec-load remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d mountall-bootclean.sh remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d mountall.sh remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d checkfs.sh remove
@@ -63,7 +63,7 @@ rm -f "${WS_ROOT}/etc/securetty" # allow root login via telnet
 sed -i "s/\(^[123456]:.*\)/#\1/" "${WS_ROOT}/etc/inittab"
 echo "T0:23:respawn:/sbin/pgetty" >>"${WS_ROOT}/etc/inittab"
 
-echo "onl-x86" > "${WS_ROOT}/etc/hostname"
+echo "onl-wedge" > "${WS_ROOT}/etc/hostname"
 
 ${RFSTOOL} -c fsclean
 

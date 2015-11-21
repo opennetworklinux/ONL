@@ -191,8 +191,6 @@ def update_system_rc():
     update_rc('nfs-common remove')
     update_rc('rpcbind remove')
     update_rc('motd remove')
-    update_rc('kexec remove')
-    update_rc('kexec-load remove')
     update_rc('mountall-bootclean.sh remove')
     update_rc('mountall.sh remove')
     update_rc('checkfs.sh remove')
