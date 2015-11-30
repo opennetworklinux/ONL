@@ -62,6 +62,7 @@ closed_source = [
 "onlp-x86-64-accton-as6812-32x-r0:amd64",
 "onlp-x86-64-accton-as7512-32x-r0:amd64",
 "onlp-x86-64-accton-as7712-32x-r0:amd64",
+"onlp-powerpc-fsl-p2041rdb-r0:powerpc",
 "onlp-powerpc-dni-7448-r0:powerpc"
 ];
 

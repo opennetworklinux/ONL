@@ -1,0 +1,12 @@
+Source: platform-powerpc-fsl-p2041rdb-r0
+Section: misc
+Priority: optional
+Maintainer: Support <support@bigswitch.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.8.4
+
+Package: platform-powerpc-fsl-p2041rdb-r0
+Architecture: powerpc
+Depends: 
+Description: Freescale P2041RDB Platform Files
+ fsl-p2041rdb Platform Files
