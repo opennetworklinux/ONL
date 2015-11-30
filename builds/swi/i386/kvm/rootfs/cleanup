@@ -42,8 +42,6 @@ chroot "${WS_ROOT}" /usr/sbin/update-rc.d ntp remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d nfs-common remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d rpcbind remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d motd remove
-chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec remove
-chroot "${WS_ROOT}" /usr/sbin/update-rc.d kexec-load remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d mountall-bootclean.sh remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d mountall.sh remove
 chroot "${WS_ROOT}" /usr/sbin/update-rc.d checkfs.sh remove
