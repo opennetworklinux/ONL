@@ -314,7 +314,6 @@ partition_msdos()
   end=$(( $start + 65535 ))
 
   parted -s $DEV unit s mkpart primary ext4 ${start}s ${end}s || return 1
-  tune2fs -L "ONL-BOOT" $DEV || return 1
   parted $DEV set $MINPART boot on || return 1
   mkfs.ext4 -L "ONL-BOOT" ${DEV}${MINPART}
   ONL_BOOT=${DEV}${MINPART}
@@ -329,7 +328,6 @@ partition_msdos()
   end=$(( $start + 33 * 1048576 / 512 ))
 
   parted -s $DEV unit s mkpart primary fat32 ${start}s ${end}s || return 1
-  tune2fs -L "FLASH" $DEV || return 1
   mkfs.vfat -n "FLASH" ${DEV}${MINPART}
   FLASH=${DEV}${MINPART}
 
@@ -340,7 +338,6 @@ partition_msdos()
   start=$NEXTBLOCK
 
   parted -s $DEV unit s mkpart primary fat32 ${start}s "100%" || return 1
-  tune2fs -L "FLASH2" $DEV || return 1
   mkfs.vfat -n "FLASH2" ${DEV}${MINPART}
   FLASH2=${DEV}${MINPART}
 
